@@ -11,7 +11,7 @@ LIMIT 10;
 ```
 **The result: **
 
-|full_name|age|martial_status|email|phone|full_address|job_title|membership_date|
+|full_name|age|marital_status|email|phone|full_address|job_title|membership_date|
 |---------|---|--------------|-----|-----|------------|---------|---------------|
 |addie lush|40|married|alush0@shutterfly.com|254-389-8708|3226 Eastlawn Pass,Temple,Texas|Assistant Professor|7/31/2013|
 |ROCK CRADICK|46|married|rcradick1@newsvine.com|910-566-2007|4 Harbort Avenue,Fayetteville,North Carolina|Programmer III|5/27/2018|
@@ -33,7 +33,7 @@ Let's generate a new table where we can manipulate and restructure the data with
 CREATE TABLE club_member_info_cleaned (
 	full_name VARCHAR(50),
 	age INTEGER,
-	martial_status VARCHAR(50),
+	marital_status VARCHAR(50),
 	email VARCHAR(50),
 	phone VARCHAR(50),
 	full_address VARCHAR(50),
@@ -91,13 +91,37 @@ SELECT COUNT(*) FROM club_member_info_cleaned
 |--------|
 |18|
 
-Okay, let's fix it replacing all wrong values with mode:
+Okay, let's fix it replacing all wrong values. Since age of an individual is not as crucial in data analysis, let's replace all values not in the valid range with the mode.
 
 ```sql
 UPDATE club_member_info_cleaned 
 	SET age = (SELECT MODE(age) FROM club_member_info_cleaned) 
 	WHERE age < 18 OR age > 90 or age is NULL;
 ```
+
+## Marital status cleaning
+
+There are only 3 possible values for marital status:
+- single
+- married
+- divorced
+
+I plan to replace all values not in this list with NULL. But before doing this we need at least trim it and standardise a letter case not to loose right values with typos.
+
+```sql
+UPDATE club_member_info_cleaned 
+	SET marital_status = TRIM(LOWER(marital_status));
+```
+
+Now we are ready to clean all wrong values:
+
+```sql
+UPDATE club_member_info_cleaned 
+	SET marital_status = NULL 
+	WHERE NOT marital_status IN ('single', 'married', 'divorced');
+```
+
+
 
 
 
