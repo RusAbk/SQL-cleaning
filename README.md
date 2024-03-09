@@ -9,6 +9,7 @@ SELECT *
 FROM club_member_info
 LIMIT 10;
 ```
+**The result: **
 
 |full_name|age|martial_status|email|phone|full_address|job_title|membership_date|
 |---------|---|--------------|-----|-----|------------|---------|---------------|
@@ -22,4 +23,82 @@ LIMIT 10;
 |Joete Cudiff|51|separated|jcudiff7@ycombinator.com|616-617-0965|975 Dwight Plaza,Grand Rapids,Michigan|Research Nurse|11/16/2014|
 |mendie alexandrescu|46|single|malexandrescu8@state.gov|504-918-4753|34 Delladonna Terrace,New Orleans,Louisiana|Systems Administrator III|3/12/1921|
 |fey kloss|52|married|fkloss9@godaddy.com|808-177-0318|8976 Jackson Park,Honolulu,Hawaii|Chemical Engineer|11/5/2014|
+
+## Copy the table
+### Create a new table for cleaning
+
+Let's generate a new table where we can manipulate and restructure the data without modifying the original dataset.
+
+```sql
+CREATE TABLE club_member_info_cleaned (
+	full_name VARCHAR(50),
+	age INTEGER,
+	martial_status VARCHAR(50),
+	email VARCHAR(50),
+	phone VARCHAR(50),
+	full_address VARCHAR(50),
+	job_title VARCHAR(50),
+	membership_date VARCHAR(50)
+);
+```
+
+### Copy all values from original table
+
+```sql
+INSERT INTO club_member_info_cleaned
+SELECT * FROM club_member_info;
+```
+
+
+## Full name column cleaning
+
+Even from the beginning we can find out that full_name column contains a lot of inconsistencies. I plan to:
+
+- Trim whitespaces
+- Convert all names to uppercase
+- Replace empty names with `NULL`
+
+### Trim whitespaces
+```sql
+UPDATE club_member_info_cleaned SET full_name = TRIM(full_name)
+```
+
+### To uppercase
+```sql
+UPDATE club_member_info_cleaned SET full_name = UPPER(full_name)
+```
+### Replace empty values with NULL
+```sql
+UPDATE club_member_info_cleaned SET 
+	full_name = CASE WHEN full_name = '' THEN NULL ELSE full_name END;
+```
+
+## Age cleaning
+
+Possible issues with age:
+
+- It could be empty.
+- It could fall outside the realistic range (18 - 90).
+
+Let's check if there are such values in our dataset:
+```sql
+SELECT COUNT(*) FROM club_member_info_cleaned 
+	WHERE age < 18 OR age > 90 or age is NULL;
+```
+**Result:**
+
+|COUNT(*)|
+|--------|
+|18|
+
+Okay, let's fix it replacing all wrong values with mode:
+
+```sql
+UPDATE club_member_info_cleaned 
+	SET age = (SELECT MODE(age) FROM club_member_info_cleaned) 
+	WHERE age < 18 OR age > 90 or age is NULL;
+```
+
+
+
 
