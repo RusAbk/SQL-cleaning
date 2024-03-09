@@ -121,8 +121,29 @@ UPDATE club_member_info_cleaned
 	WHERE NOT marital_status IN ('single', 'married', 'divorced');
 ```
 
+## Other text columns
 
+It seems we can trim and lowercase all other text columns in our table as a base action. Let's do it:
 
+```sql
+UPDATE club_member_info_cleaned SET
+	phone = TRIM(LOWER(phone)),
+	full_address = TRIM(LOWER(full_address)),
+	job_title = TRIM(LOWER(job_title)),
+	membership_date  = TRIM(LOWER(membership_date));
+```
 
+Also we can replace all empty values with `NULL`:
+
+```sql
+UPDATE club_member_info_cleaned SET
+	phone = NULL WHERE phone = '';
+UPDATE club_member_info_cleaned SET
+	full_address = NULL WHERE full_address = '';
+UPDATE club_member_info_cleaned SET
+	job_title = NULL WHERE job_title = '';
+UPDATE club_member_info_cleaned SET
+	membership_date = NULL WHERE membership_date = '';
+```
 
 
