@@ -1,6 +1,6 @@
 # SQL-cleaning
 
-This is an educational project on data cleaning and preparation using SQL. The original database in CSV format is located in the file 123.csv. Here, we will explore the steps that need to be applied to obtain a cleansed version of the dataset.
+This is an educational project on data cleaning and preparation using SQL. The original database in CSV format is located in the file club_member_info.csv. Here, we will explore the steps that need to be applied to obtain a cleansed version of the dataset.
 
 Let's inspect the initial rows to analyze the data in its original format.
 
@@ -9,7 +9,7 @@ SELECT *
 FROM club_member_info
 LIMIT 10;
 ```
-**The result: **
+**The result:**
 
 |full_name|age|marital_status|email|phone|full_address|job_title|membership_date|
 |---------|---|--------------|-----|-----|------------|---------|---------------|
